@@ -1,6 +1,6 @@
 Name: icewm-startup
 Version: 0.0
-Release: alt1
+Release: alt2
 
 Summary: simple pluggable IceWM autostart manager
 
@@ -34,6 +34,7 @@ Group: Graphical desktop/Icewm
 Summary: gkrellm autostart at IceWM startup
 Summary(ru_RU.CP1251): автозапуск gkrellm при старте IceWM
 Requires: %name gkrellm xtoolwait
+AutoReq: no
 
 %description gkrellm
 gkrellm plug-in for simple pluggable IceWM autostart manager.
@@ -44,18 +45,34 @@ gkrellm plug-in для менеджера автозапуска программ при старте IceWM.
 Group: Graphical desktop/Icewm
 Summary: idesk autostart at IceWM startup
 Summary(ru_RU.CP1251): автозапуск idesk при старте IceWM
-Requires: %name idesk 
+Requires: %name idesk
+Conflicts: %name-kdesktop
+AutoReq: no
 
 %description idesk
 idesk plug-in for simple pluggable IceWM autostart manager.
 %description -l ru_RU.CP1251 idesk
 idesk plug-in для менеджера автозапуска программ при старте IceWM.
 
+%package kdesktop
+Group: Graphical desktop/Icewm
+Summary: kdesktop autostart at IceWM startup
+Summary(ru_RU.CP1251): автозапуск kdesktop при старте IceWM
+Requires: %name kdebase-wm
+Conflicts: %name-idesk
+AutoReq: no
+
+%description kdesktop
+kdesktop plug-in for simple pluggable IceWM autostart manager.
+%description -l ru_RU.CP1251 kdesktop
+kdesktop plug-in для менеджера автозапуска программ при старте IceWM.
+
 %package xxkb
 Group: Graphical desktop/Icewm
 Summary: xxkb autostart at IceWM startup
 Summary(ru_RU.CP1251): автозапуск xxkb при старте IceWM
 Requires: %name xxkb
+AutoReq: no
 
 %description xxkb
 xxkb plug-in for simple pluggable IceWM autostart manager.
@@ -96,6 +113,7 @@ done
 EOF
 
 echo 'xtoolwait gkrellm'> %buildroot/%icewmconfdir/startup.d/gkrellm
+echo 'kdesktop&'> %buildroot/%icewmconfdir/startup.d/kdesktop
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/idesk
 #!/bin/sh
 if [ -e ~/.ideskrc ]; then 
@@ -109,7 +127,7 @@ cat <<EOF > %buildroot/%icewmconfdir/startup.d/xxkb
 #!/bin/sh
 # it is not wise to run non-configured xxkb, so we look 
 # whether it is configured.
-$ if [ -e ~/.xxkbrc ] then user has configured xxkb properly
+# if [ -e ~/.xxkbrc ] then user has configured xxkb properly
 # if [ -e /etc/X11/app-defaults/XXkb ]
 # then sysadmin has configured xxkb properly.
 
@@ -133,10 +151,16 @@ chmod 755 %buildroot/%icewmconfdir/startup
 %files idesk
 %config %icewmconfdir/startup.d/idesk
 
+%files kdesktop
+%config %icewmconfdir/startup.d/kdesktop
+
 %files xxkb
 %config %icewmconfdir/startup.d/xxkb
 
 %changelog
+* Mon Apr 17 2006 Igor Vlasenko <viy@altlinux.ru> 0.0-alt2
+- added kdesktop support
+
 * Wed Mar 22 2006 Igor Vlasenko <viy@altlinux.ru> 0.0-alt1
 - build for Sisyphus
 
