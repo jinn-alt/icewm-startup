@@ -1,10 +1,10 @@
 Name: icewm-startup
-Version: 0.0
-Release: alt2
+Version: 0.1
+Release: alt1
 
 Summary: simple pluggable IceWM autostart manager
 
-Summary(ru_RU.CP1251): менеджер автозапуска программ при старте IceWM
+Summary(ru_RU.CP1251): менеджер автозапуска программ IceWM
 License: GPL
 Group: Graphical desktop/Icewm
 Url: http://www.imath.kiev.ua/~vlasenko/
@@ -14,20 +14,25 @@ Packager: Igor Vlasenko <viy@altlinux.ru>
 
 BuildArch: noarch
 AutoReq: no
-%define icewmconfdir %_sysconfdir/X11/icewm
-#due to new icewmconfdir in xorg 7.0
-Requires: icewm >= 1.2.25
+
+# uncomment if you want to backport prior to M30
 #define icewmconfdir #_x11x11dir/icewm
 #Requires: icewm
+%define icewmconfdir %_sysconfdir/X11/icewm
+#due to new icewmconfdir in /etc/X11
+Requires: icewm >= 1.2.25
 
 %description
 Simple pluggable icewm autostart manager is a generic IceWM startup script
-which allows one to configure IceWM autostart via installing corresponding
-rpm plug-ins.
+which allows one to configure IceWM default autostart via installing corresponding rpm plug-ins.
 
 %description -l ru_RU.CP1251
-менеджер автозапуска программ при старте IceWM позвол€ет просто настраивать 
-рабочий стол IceWM путем установки rpm расширений.
+менеджер автозапуска программ IceWM
+позвол€ет путем установки rpm расширений просто настраивать 
+рабочий стол IceWM по умолчанию сразу дл€ всех пользователей, 
+сохран€€ за пользовател€ми полную свободу персональной настройки
+автозапуска.
+»меющиес€ модули позвол€ют запускать ivman, gkrellm, xxkb и т. д.
 
 %package gkrellm
 Group: Graphical desktop/Icewm
@@ -39,7 +44,8 @@ AutoReq: no
 %description gkrellm
 gkrellm plug-in for simple pluggable IceWM autostart manager.
 %description -l ru_RU.CP1251 gkrellm
-gkrellm plug-in дл€ менеджера автозапуска программ при старте IceWM.
+запуск gkrellm при старте IceWM
+(“ребует менеджер автозапуска программ IceWM).
 
 %package idesk
 Group: Graphical desktop/Icewm
@@ -79,12 +85,82 @@ xxkb plug-in for simple pluggable IceWM autostart manager.
 ~/.xxkbrc or /etc/X11/app-defaults/XXkb is required.
 %description -l ru_RU.CP1251 xxkb
 xxkb plug-in дл€ менеджера автозапуска программ при старте IceWM.
-xxkb запускаетс€ только при наличии ~/.xxkbrc или /etc/X11/app-defaults/XXkb.
+ѕлагин запускает xxkb только при наличии ~/.xxkbrc или 
+/etc/X11/app-defaults/XXkb.
+
+%package desklaunch
+Group: Graphical desktop/Icewm
+Summary: desklaunch autostart at IceWM startup
+Summary(ru_RU.CP1251): автозапуск desklaunch при старте IceWM
+Requires: %name desklaunch
+AutoReq: no
+
+%description desklaunch
+desklaunch plug-in for simple pluggable IceWM autostart manager.
+xtdesktop is only launched for users that have ~/.desklaunchrc.
+%description -l ru_RU.CP1251 desklaunch
+desklaunch plug-in дл€ менеджера автозапуска программ IceWM.
+ѕлагин запускает desklaunch только при наличии ~/.desklaunchrc.
+
+%package xtdesktop
+Group: Graphical desktop/Icewm
+Summary: xtdesktop autostart at IceWM startup
+Summary(ru_RU.CP1251): автозапуск xtdesktop при старте IceWM
+Requires: %name xtdesktop
+AutoReq: no
+
+%description xtdesktop
+xtdesktop plug-in for simple pluggable IceWM autostart manager.
+xtdesktop is only launched for users that have ~/.xtdeskrc.
+%description -l ru_RU.CP1251 xtdesktop
+xtdesktop plug-in дл€ менеджера автозапуска программ IceWM.
+ѕлагин запускает xtdesktop только при наличии ~/.xtdeskrc.
+
+%package ivman
+Group: Graphical desktop/Icewm
+Summary: ivman autostart at IceWM startup
+Summary(ru_RU.CP1251): автозапуск ivman при старте IceWM
+Requires: %name ivman
+AutoReq: no
+
+%description ivman
+ivman plug-in for simple pluggable IceWM autostart manager.
+%description -l ru_RU.CP1251 ivman
+ivman plug-in дл€ менеджера автозапуска программ IceWM.
 
 %prep
 %setup -q -c -T
 
 %build
+
+cat > README.ru_RU.CP1251 <<EOF
+
+~/.icewm/startup.d
+
+# starting all system-wide icewm autostart programs
+for file in %icewmconfdir/startup.d/*; do
+  userfile=~/.icewm/startup.d/`echo $file | sed -e 's,%icewmconfdir/startup.d/,,'`
+  # root can disable autostart removing 'execute' bits
+  if [ -x $file ]; then 
+    # User-supplied programs disable system-wide programs.
+    # So user can disable system-wide program 
+    # by touching file in ~/.icewm/startup.d/ with the same name
+    # or even replace it with his own script.
+    [ -e $userfile ] || . $file
+  fi
+done
+
+# starting user-supplied icewm autostart programs
+for file in ~/.icewm/startup.d/*; do
+  # running user files 
+  # user can disable autostart removing 'execute' bits
+  [ -x $file ] && . $file
+done
+
+
+EOF
+
+
 
 %install
 %__mkdir_p %buildroot/%icewmconfdir/startup.d
@@ -136,6 +212,30 @@ if [ -e ~/.xxkbrc ] || [ -e /etc/X11/app-defaults/XXkb ]; then
 fi
 EOF
 
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/desklaunch
+#!/bin/sh
+# it is not wise to run non-configured desklaunch, so we look 
+# whether it is configured.
+# if [ -e ~/.desklaunchrc ] then user has configured desklaunch properly
+if [ -e ~/.desklaunchrc ]; then
+  desklaunch&
+fi
+EOF
+
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/xtdesktop
+#!/bin/sh
+# it is not wise to run non-configured xtdesktop, so we look 
+# whether it is configured.
+# if [ -e ~/.xtdeskrc ] then user has configured xtdesktop properly
+if [ -e ~/.xtdeskrc ]; then
+  xtdesktop&
+fi
+EOF
+
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/ivman
+  ivman&
+EOF
+
 chmod 755 %buildroot/%icewmconfdir/startup.d/*
 chmod 755 %buildroot/%icewmconfdir/startup
 
@@ -157,7 +257,20 @@ chmod 755 %buildroot/%icewmconfdir/startup
 %files xxkb
 %config %icewmconfdir/startup.d/xxkb
 
+%files desklaunch
+%config %icewmconfdir/startup.d/desklaunch
+
+%files xtdesktop
+%config %icewmconfdir/startup.d/xtdesktop
+
+%files ivman
+%config %icewmconfdir/startup.d/xtdesktop
+
 %changelog
+* Sat Sep 08 2007 Igor Vlasenko <viy@altlinux.ru> 0.1-alt1
+- added ivman, desklaunch and xtdesktop support
+- TODO: README
+
 * Mon Apr 17 2006 Igor Vlasenko <viy@altlinux.ru> 0.0-alt2
 - added kdesktop support
 
