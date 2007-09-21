@@ -1,6 +1,6 @@
 Name: icewm-startup
-Version: 0.1
-Release: alt1
+Version: 0.11
+Release: alt2
 
 Summary: simple pluggable IceWM autostart manager
 
@@ -32,12 +32,16 @@ which allows one to configure IceWM default autostart via installing correspondi
 рабочий стол IceWM по умолчанию сразу дл€ всех пользователей, 
 сохран€€ за пользовател€ми полную свободу персональной настройки
 автозапуска.
-»меющиес€ модули позвол€ют запускать ivman, gkrellm, xxkb и т. д.
+
+»меющиес€ модули позвол€ют при старте icewm обновл€ть локальное меню пользовател€
+(если у него оно есть), запускать arts, ivman, gkrellm, xxkb,
+запускать рабочий стол (idesk, xtdesktop, desklaunch, kdesktop) и т. д.
 
 %package gkrellm
 Group: Graphical desktop/Icewm
 Summary: gkrellm autostart at IceWM startup
 Summary(ru_RU.CP1251): автозапуск gkrellm при старте IceWM
+# xtoolwait is required because icewm is not launched yet
 Requires: %name gkrellm xtoolwait
 AutoReq: no
 
@@ -97,7 +101,7 @@ AutoReq: no
 
 %description desklaunch
 desklaunch plug-in for simple pluggable IceWM autostart manager.
-xtdesktop is only launched for users that have ~/.desklaunchrc.
+desklaunch is only launched for users that have ~/.desklaunchrc.
 %description -l ru_RU.CP1251 desklaunch
 desklaunch plug-in дл€ менеджера автозапуска программ IceWM.
 ѕлагин запускает desklaunch только при наличии ~/.desklaunchrc.
@@ -128,12 +132,44 @@ ivman plug-in for simple pluggable IceWM autostart manager.
 %description -l ru_RU.CP1251 ivman
 ivman plug-in дл€ менеджера автозапуска программ IceWM.
 
+%package arts
+Group: Graphical desktop/Icewm
+Summary: arts autostart at IceWM startup
+Summary(ru_RU.CP1251): автозапуск arts при старте IceWM
+Requires: %name arts
+AutoReq: no
+
+%description arts
+arts plug-in for simple pluggable IceWM autostart manager.
+%description -l ru_RU.CP1251 arts
+arts plug-in дл€ менеджера автозапуска программ IceWM.
+
+%package update-menus
+Group: Graphical desktop/Icewm
+Summary: autoupdate of user menu at IceWM startup
+Summary(ru_RU.CP1251): автообновление меню пользовател€ при старте IceWM (при необходимости)
+Requires: %name menu
+AutoReq: no
+
+%description update-menus
+update-menus plug-in for simple pluggable IceWM autostart manager.
+Does autoupdate of user menu at IceWM startup. (~/.icewm/menu).
+
+%description -l ru_RU.CP1251 update-menus
+update-menus plug-in дл€ менеджера автозапуска программ IceWM.
+автообновление меню пользовател€ при старте IceWM. 
+јвтообновление запускаетс€ только если пользователь 
+не пользуетс€ общесистемным меню, а предпочитает 
+локальное меню из ~/.icewm/menu.
+
 %prep
 %setup -q -c -T
 
 %build
 
 cat > README.ru_RU.CP1251 <<EOF
+
+
 
 ~/.icewm/startup.d
 
@@ -146,6 +182,8 @@ for file in %icewmconfdir/startup.d/*; do
     # So user can disable system-wide program 
     # by touching file in ~/.icewm/startup.d/ with the same name
     # or even replace it with his own script.
+
+    # skip system-wide program if user-supplied file exists.
     [ -e $userfile ] || . $file
   fi
 done
@@ -176,6 +214,8 @@ for file in %icewmconfdir/startup.d/*; do
     # So user can disable system-wide program 
     # by touching file in ~/.icewm/startup.d/ with the same name
     # or even replace it with his own script.
+
+    # skip system-wide program if user-supplied file exists.
     [ -e $userfile ] || . $file
   fi
 done
@@ -190,6 +230,9 @@ EOF
 
 echo 'xtoolwait gkrellm'> %buildroot/%icewmconfdir/startup.d/gkrellm
 echo 'kdesktop&'> %buildroot/%icewmconfdir/startup.d/kdesktop
+echo 'ivman&'> %buildroot/%icewmconfdir/startup.d/ivman
+echo 'artsd&'> %buildroot/%icewmconfdir/startup.d/arts
+
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/idesk
 #!/bin/sh
 if [ -e ~/.ideskrc ]; then 
@@ -232,8 +275,13 @@ if [ -e ~/.xtdeskrc ]; then
 fi
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/startup.d/ivman
-  ivman&
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/update-menus
+#!/bin/sh
+# if user has no local menu we will not create it either.
+# otherwise it is worth updating it.
+if [ -e ~/.icewm/menu ]; then
+  update-menus&
+fi
 EOF
 
 chmod 755 %buildroot/%icewmconfdir/startup.d/*
@@ -245,31 +293,43 @@ chmod 755 %buildroot/%icewmconfdir/startup
 %config %icewmconfdir/startup
 #%_man1dir/*
 
+%files arts
+%config %icewmconfdir/startup.d/arts
+
+%files desklaunch
+%config %icewmconfdir/startup.d/desklaunch
+
 %files gkrellm
 %config %icewmconfdir/startup.d/gkrellm
 
 %files idesk
 %config %icewmconfdir/startup.d/idesk
 
+%files ivman
+%config %icewmconfdir/startup.d/ivman
+
 %files kdesktop
 %config %icewmconfdir/startup.d/kdesktop
 
-%files xxkb
-%config %icewmconfdir/startup.d/xxkb
-
-%files desklaunch
-%config %icewmconfdir/startup.d/desklaunch
+%files update-menus
+%config %icewmconfdir/startup.d/update-menus
 
 %files xtdesktop
 %config %icewmconfdir/startup.d/xtdesktop
 
-%files ivman
-%config %icewmconfdir/startup.d/xtdesktop
+%files xxkb
+%config %icewmconfdir/startup.d/xxkb
 
 %changelog
+* Fri Sep 21 2007 Igor Vlasenko <viy@altlinux.ru> 0.11-alt2
+- fixed requires in update-menus
+
+* Thu Sep 20 2007 Igor Vlasenko <viy@altlinux.ru> 0.11-alt1
+- added arts, update-menus
+- TODO: README
+
 * Sat Sep 08 2007 Igor Vlasenko <viy@altlinux.ru> 0.1-alt1
 - added ivman, desklaunch and xtdesktop support
-- TODO: README
 
 * Mon Apr 17 2006 Igor Vlasenko <viy@altlinux.ru> 0.0-alt2
 - added kdesktop support
