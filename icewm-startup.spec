@@ -1,6 +1,8 @@
+%def_without xtdesktop
+%def_without desklaunch
 Name: icewm-startup
 Version: 0.11
-Release: alt2
+Release: alt2.1
 
 Summary: simple pluggable IceWM autostart manager
 
@@ -92,33 +94,45 @@ xxkb plug-in для менеджера автозапуска программ при старте IceWM.
 Плагин запускает xxkb только при наличии ~/.xxkbrc или 
 /etc/X11/app-defaults/XXkb.
 
+%if_with desklaunch
 %package desklaunch
 Group: Graphical desktop/Icewm
 Summary: desklaunch autostart at IceWM startup
 Summary(ru_RU.CP1251): автозапуск desklaunch при старте IceWM
 Requires: %name desklaunch
 AutoReq: no
+%endif #desklaunch
 
+%if_with desklaunch
 %description desklaunch
 desklaunch plug-in for simple pluggable IceWM autostart manager.
 desklaunch is only launched for users that have ~/.desklaunchrc.
+%endif #desklaunch
+%if_with desklaunch
 %description -l ru_RU.CP1251 desklaunch
 desklaunch plug-in для менеджера автозапуска программ IceWM.
 Плагин запускает desklaunch только при наличии ~/.desklaunchrc.
+%endif #desklaunch
 
+%if_with xtdesktop
 %package xtdesktop
 Group: Graphical desktop/Icewm
 Summary: xtdesktop autostart at IceWM startup
 Summary(ru_RU.CP1251): автозапуск xtdesktop при старте IceWM
 Requires: %name xtdesktop
 AutoReq: no
+%endif #xtdesktop
 
+%if_with xtdesktop
 %description xtdesktop
 xtdesktop plug-in for simple pluggable IceWM autostart manager.
 xtdesktop is only launched for users that have ~/.xtdeskrc.
+%endif #xtdesktop
+%if_with xtdesktop
 %description -l ru_RU.CP1251 xtdesktop
 xtdesktop plug-in для менеджера автозапуска программ IceWM.
 Плагин запускает xtdesktop только при наличии ~/.xtdeskrc.
+%endif #xtdesktop
 
 %package ivman
 Group: Graphical desktop/Icewm
@@ -296,8 +310,10 @@ chmod 755 %buildroot/%icewmconfdir/startup
 %files arts
 %config %icewmconfdir/startup.d/arts
 
+%if_with desklaunch
 %files desklaunch
 %config %icewmconfdir/startup.d/desklaunch
+%endif #desklaunch
 
 %files gkrellm
 %config %icewmconfdir/startup.d/gkrellm
@@ -314,13 +330,18 @@ chmod 755 %buildroot/%icewmconfdir/startup
 %files update-menus
 %config %icewmconfdir/startup.d/update-menus
 
+%if_with xtdesktop
 %files xtdesktop
 %config %icewmconfdir/startup.d/xtdesktop
+%endif #xtdesktop
 
 %files xxkb
 %config %icewmconfdir/startup.d/xxkb
 
 %changelog
+* Tue Dec 02 2008 Igor Vlasenko <viy@altlinux.ru> 0.11-alt2.1
+- disabled unmet subpackages using nmu script
+
 * Fri Sep 21 2007 Igor Vlasenko <viy@altlinux.ru> 0.11-alt2
 - fixed requires in update-menus
 
