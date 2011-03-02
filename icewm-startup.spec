@@ -2,7 +2,7 @@
 %def_without desklaunch
 Name: icewm-startup
 Version: 0.11
-Release: alt2.1
+Release: alt3
 
 Summary: simple pluggable IceWM autostart manager
 
@@ -36,7 +36,7 @@ which allows one to configure IceWM default autostart via installing correspondi
 автозапуска.
 
 »меющиес€ модули позвол€ют при старте icewm обновл€ть локальное меню пользовател€
-(если у него оно есть), запускать arts, ivman, gkrellm, xxkb,
+(если у него оно есть), запускать ivman, gkrellm, xxkb,
 запускать рабочий стол (idesk, xtdesktop, desklaunch, kdesktop) и т. д.
 
 %package gkrellm
@@ -107,8 +107,6 @@ AutoReq: no
 %description desklaunch
 desklaunch plug-in for simple pluggable IceWM autostart manager.
 desklaunch is only launched for users that have ~/.desklaunchrc.
-%endif #desklaunch
-%if_with desklaunch
 %description -l ru_RU.CP1251 desklaunch
 desklaunch plug-in дл€ менеджера автозапуска программ IceWM.
 ѕлагин запускает desklaunch только при наличии ~/.desklaunchrc.
@@ -127,8 +125,6 @@ AutoReq: no
 %description xtdesktop
 xtdesktop plug-in for simple pluggable IceWM autostart manager.
 xtdesktop is only launched for users that have ~/.xtdeskrc.
-%endif #xtdesktop
-%if_with xtdesktop
 %description -l ru_RU.CP1251 xtdesktop
 xtdesktop plug-in дл€ менеджера автозапуска программ IceWM.
 ѕлагин запускает xtdesktop только при наличии ~/.xtdeskrc.
@@ -145,18 +141,6 @@ AutoReq: no
 ivman plug-in for simple pluggable IceWM autostart manager.
 %description -l ru_RU.CP1251 ivman
 ivman plug-in дл€ менеджера автозапуска программ IceWM.
-
-%package arts
-Group: Graphical desktop/Icewm
-Summary: arts autostart at IceWM startup
-Summary(ru_RU.CP1251): автозапуск arts при старте IceWM
-Requires: %name arts
-AutoReq: no
-
-%description arts
-arts plug-in for simple pluggable IceWM autostart manager.
-%description -l ru_RU.CP1251 arts
-arts plug-in дл€ менеджера автозапуска программ IceWM.
 
 %package update-menus
 Group: Graphical desktop/Icewm
@@ -307,9 +291,6 @@ chmod 755 %buildroot/%icewmconfdir/startup
 %config %icewmconfdir/startup
 #%_man1dir/*
 
-%files arts
-%config %icewmconfdir/startup.d/arts
-
 %if_with desklaunch
 %files desklaunch
 %config %icewmconfdir/startup.d/desklaunch
@@ -339,6 +320,9 @@ chmod 755 %buildroot/%icewmconfdir/startup
 %config %icewmconfdir/startup.d/xxkb
 
 %changelog
+* Wed Mar 02 2011 Igor Vlasenko <viy@altlinux.ru> 0.11-alt3
+- removed artsd support (obsolete)
+
 * Tue Dec 02 2008 Igor Vlasenko <viy@altlinux.ru> 0.11-alt2.1
 - disabled unmet subpackages using nmu script
 
