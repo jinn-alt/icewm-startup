@@ -192,6 +192,15 @@ AutoReq: no
 networkmanager plug-in for simple network configuration.
 Start gnome networkmanager applet into tray.
 
+%package tray_mixer_plus
+Group: Graphical desktop/Icewm
+Summary: start simple tray sound volume control
+Requires: %name tray_mixer_plus
+AutoReq: no
+
+%description tray_mixer_plus
+tray_mixer_plus plug-in for simple sound volume control.
+
 %prep
 %setup -q -c -T
 
@@ -301,7 +310,7 @@ if [ -e ~/.desklaunchrc ]; then
 fi
 EOF
 %endif #desklaunch
- 
+
 %if_with xtdesktop
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/xtdesktop
 #!/bin/sh
@@ -328,6 +337,8 @@ cat <<EOF > %buildroot/%icewmconfdir/startup.d/networkmanager
 /usr/bin/nm-applet --sm-disable&
 /usr/libexec/polkit-1/polkit-gnome-authentication-agent-1&
 EOF
+
+echo "tray_mixer_plus&" > %buildroot/%icewmconfdir/startup.d/tray_mixer_plus
 
 chmod 755 %buildroot/%icewmconfdir/startup.d/*
 chmod 755 %buildroot/%icewmconfdir/startup
@@ -390,9 +401,13 @@ fi
 %files networkmanager
 %config %icewmconfdir/startup.d/networkmanager
 
+%files tray_mixer_plus
+%config %icewmconfdir/startup.d/tray_mixer_plus
+
 %changelog
 * Sat Mar 30 2013 Dmitriy Khanzhin <jinn@altlinux.org> 0.13-alt1
 - added xxkb-tray subpackage
+- added tray_mixer_plus subpackage
 - spec converted to utf-8
 
 * Thu Feb 28 2013 Dmitriy Khanzhin <jinn@altlinux.org> 0.12-alt1
