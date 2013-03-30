@@ -263,7 +263,6 @@ EOF
 echo 'xtoolwait gkrellm'> %buildroot/%icewmconfdir/startup.d/gkrellm
 echo 'kdesktop&'> %buildroot/%icewmconfdir/startup.d/kdesktop
 echo 'ivman&'> %buildroot/%icewmconfdir/startup.d/ivman
-echo 'artsd&'> %buildroot/%icewmconfdir/startup.d/arts
 
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/idesk
 #!/bin/sh
