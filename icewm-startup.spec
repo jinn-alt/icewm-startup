@@ -287,6 +287,7 @@ if [ -e ~/.xxkbrc ] || [ -e /etc/X11/app-defaults/XXkb ]; then
 fi
 EOF
 
+%if_with desklaunch
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/desklaunch
 #!/bin/sh
 # it is not wise to run non-configured desklaunch, so we look 
@@ -296,7 +297,9 @@ if [ -e ~/.desklaunchrc ]; then
   desklaunch&
 fi
 EOF
-
+%endif #desklaunch
+ 
+%if_with xtdesktop
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/xtdesktop
 #!/bin/sh
 # it is not wise to run non-configured xtdesktop, so we look 
@@ -306,6 +309,7 @@ if [ -e ~/.xtdeskrc ]; then
   xtdesktop&
 fi
 EOF
+%endif #xtdesktop
 
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/update-menus
 #!/bin/sh
