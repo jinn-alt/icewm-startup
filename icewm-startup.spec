@@ -287,6 +287,9 @@ if [ -e ~/.xxkbrc ] || [ -e /etc/X11/app-defaults/XXkb ]; then
 fi
 EOF
 
+install -pD -m 644 %SOURCE1 %buildroot/%icewmconfdir/XXkb.conf
+cp %buildroot/%icewmconfdir/startup.d/xxkb %buildroot/%icewmconfdir/startup.d/xxkb-tray
+
 %if_with desklaunch
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/desklaunch
 #!/bin/sh
@@ -330,16 +333,20 @@ chmod 755 %buildroot/%icewmconfdir/startup.d/*
 chmod 755 %buildroot/%icewmconfdir/startup
 
 %post xxkb-tray
+if [ $1 -eq 1 ]; then
 if [ -e /etc/X11/app-defaults/XXkb ]; then
 cp -fp /etc/X11/app-defaults/XXkb %icewmconfdir/XXkb~
 cp -fp %icewmconfdir/XXkb.conf /etc/X11/app-defaults/XXkb
 fi
+fi
 
 %preun xxkb-tray
+if [ $1 -eq 0 ]; then
 if [ -e %icewmconfdir/XXkb~ ]; then
 mv -f %icewmconfdir/XXkb~ /etc/X11/app-defaults/XXkb
 else
 rm -f /etc/X11/app-defaults/XXkb
+fi
 fi
 
 %files
@@ -377,7 +384,7 @@ fi
 %config %icewmconfdir/startup.d/xxkb
 
 %files xxkb-tray
-%config %icewmconfdir/startup.d/xxkb
+%config %icewmconfdir/startup.d/xxkb-tray
 %icewmconfdir/XXkb.conf
 
 %files networkmanager
