@@ -2,7 +2,7 @@
 %def_without desklaunch
 Name: icewm-startup
 Version: 0.14
-Release: alt3
+Release: alt3.1
 
 Summary: simple pluggable IceWM autostart manager
 
@@ -459,6 +459,9 @@ fi
 %files grun
 
 %changelog
+* Sun May 10 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.14-alt3.1
+- delay moved to separate subpackage
+
 * Mon Feb 09 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.14-alt3
 - fixed typo in networkmanager subpackage
 
