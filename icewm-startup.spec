@@ -40,6 +40,20 @@ which allows one to configure IceWM default autostart via installing correspondi
 (если у него оно есть), запускать ivman, gkrellm, xxkb,
 запускать рабочий стол (idesk, xtdesktop, desklaunch, kdesktop) и т. д.
 
+%package delay
+Group: Graphical desktop/Icewm
+Summary: delay before starting programs
+Summary(ru_RU.UTF-8): задержка запуска программ
+Requires: %name
+AutoReq: no
+
+%description delay
+delay before starting programs, to eliminate possible artifacts,
+typically used to have time to start icewmtray.
+%description -l ru_RU.UTF-8 delay
+задержка перед запуском программ, чтобы устранить возможные артефакты,
+обычно используется, чтобы успел стартовать icewmtray.
+
 %package gkrellm
 Group: Graphical desktop/Icewm
 Summary: gkrellm autostart at IceWM startup
@@ -253,15 +267,6 @@ EOF
 cat <<'EOF' > %buildroot/%icewmconfdir/startup
 #!/bin/sh
 
-# delay before starting programs, to eliminate possible artifacts
-tmem=`free -m | awk '/Mem/{print $2}'`
-    if [ $tmem -le 512 ]
-	then delay=7
-    elif [ $tmem -gt 1024 ]
-	then delay=3
-    else delay=5
-    fi
-sleep $delay
 # starting all system-wide icewm autostart programs
 for file in %icewmconfdir/startup.d/*; do
   userfile=~/.icewm/startup.d/`echo $file | sed -e 's,%icewmconfdir/startup.d/,,'`
@@ -283,6 +288,21 @@ for file in ~/.icewm/startup.d/*; do
   # user can disable autostart removing 'execute' bits
   [ -x $file ] && . $file
 done
+EOF
+
+cat <<'EOF' > %buildroot/%icewmconfdir/startup.d/010-delay
+#!/bin/sh
+
+# delay before starting programs, to eliminate possible artifacts
+# name start 010- to save ability to run programs before this
+tmem=`free -m | awk '/Mem/{print $2}'`
+    if [ $tmem -le 512 ]
+	then delay=7
+    elif [ $tmem -gt 1024 ]
+	then delay=3
+    else delay=5
+    fi
+sleep $delay
 EOF
 
 echo 'xtoolwait gkrellm'> %buildroot/%icewmconfdir/startup.d/gkrellm
@@ -394,6 +414,9 @@ fi
 %dir %icewmconfdir/startup.d
 %config %icewmconfdir/startup
 #%_man1dir/*
+
+%files delay
+%config %icewmconfdir/startup.d/010-delay
 
 %if_with desklaunch
 %files desklaunch
