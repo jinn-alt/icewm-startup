@@ -224,6 +224,18 @@ AutoReq: no
 %description grun
 grun plug-in for setup dialog of launching applications in console mode.
 
+%package simple-sound
+Group: Graphical desktop/Icewm
+Summary: Startup and shutdown simple sound for IceWM
+Summary(ru_RU.UTF-8): Простейшие звуки при старте и выключении IceWM
+Requires: %name aplay
+AutoReq: no
+
+%description simple-sound
+Startup and shutdown simple sound for IceWM.
+%description -l ru_RU.UTF-8 simple-sound
+Простейшие звуки при старте и выключении IceWM.
+
 %prep
 %setup -q -c -T
 
@@ -407,6 +419,30 @@ EOF
 
 echo "tray_mixer_plus&" > %buildroot/%icewmconfdir/startup.d/070-tray_mixer_plus
 
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/000-simple-sound
+#!/bin/sh
+
+if [ -e ~/.icewm/sounds/startup.wav ]; then
+    aplay ~/.icewm/sounds/startup.wav&
+else
+    if [ -e /usr/share/X11/icewm/sounds/startup.wav ]; then
+    aplay /usr/share/X11/icewm/sounds/startup.wav&
+    fi
+fi
+EOF
+
+cat <<EOF > %buildroot/%icewmconfdir/shutdown.d/000-simple-sound
+#!/bin/sh
+
+if [ -e ~/.icewm/sounds/shutdown.wav ]; then
+    aplay ~/.icewm/sounds/shutdown.wav&
+else
+    if [ -e /usr/share/X11/icewm/sounds/shutdown.wav ]; then
+    aplay /usr/share/X11/icewm/sounds/shutdown.wav&
+    fi
+fi
+EOF
+
 chmod 755 %buildroot/%icewmconfdir/startup.d/*
 chmod 755 %buildroot/%icewmconfdir/startup
 chmod 755 %buildroot/%icewmconfdir/shutdown.d/*
@@ -493,9 +529,14 @@ fi
 
 %files grun
 
+%files simple-sound
+%config %icewmconfdir/startup.d/000-simple-sound
+%config %icewmconfdir/shutdown.d/000-simple-sound
+
 %changelog
 * Sun May 31 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.15-alt0.1
 - added "shutdown" script, thx to YYY at forum
+- added simple-sound subpackage, thx to YYY and Leo-sp150 at forum
 - delay moved to separate subpackage
 - cosmetic fix of xxkb conf file
 - some programs are assigned numeric indexes
