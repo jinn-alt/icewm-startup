@@ -409,6 +409,8 @@ echo "tray_mixer_plus&" > %buildroot/%icewmconfdir/startup.d/070-tray_mixer_plus
 
 chmod 755 %buildroot/%icewmconfdir/startup.d/*
 chmod 755 %buildroot/%icewmconfdir/startup
+chmod 755 %buildroot/%icewmconfdir/shutdown.d/*
+chmod 755 %buildroot/%icewmconfdir/shutdown
 
 %post xxkb-tray
 if [ $1 -eq 1 ]; then
