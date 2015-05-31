@@ -423,10 +423,10 @@ cat <<EOF > %buildroot/%icewmconfdir/startup.d/000-simple-sound
 #!/bin/sh
 
 if [ -e ~/.icewm/sounds/startup.wav ]; then
-    aplay ~/.icewm/sounds/startup.wav&
+    aplay ~/.icewm/sounds/startup.wav 2&> /dev/null&
 else
     if [ -e /usr/share/X11/icewm/sounds/startup.wav ]; then
-    aplay /usr/share/X11/icewm/sounds/startup.wav&
+    aplay /usr/share/X11/icewm/sounds/startup.wav 2&> /dev/null&
     fi
 fi
 EOF
@@ -435,10 +435,10 @@ cat <<EOF > %buildroot/%icewmconfdir/shutdown.d/000-simple-sound
 #!/bin/sh
 
 if [ -e ~/.icewm/sounds/shutdown.wav ]; then
-    aplay ~/.icewm/sounds/shutdown.wav&
+    aplay ~/.icewm/sounds/shutdown.wav 2&> /dev/null&
 else
     if [ -e /usr/share/X11/icewm/sounds/shutdown.wav ]; then
-    aplay /usr/share/X11/icewm/sounds/shutdown.wav&
+    aplay /usr/share/X11/icewm/sounds/shutdown.wav 2&> /dev/null&
     fi
 fi
 EOF
