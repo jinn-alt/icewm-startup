@@ -364,7 +364,6 @@ if [ -e ~/.xxkbrc ] || [ -e /etc/X11/app-defaults/XXkb ]; then
 fi
 EOF
 
-install -pD -m 644 %SOURCE1 %buildroot/%icewmconfdir/XXkb.conf
 cp %buildroot/%icewmconfdir/startup.d/xxkb %buildroot/%icewmconfdir/startup.d/xxkb-tray
 
 %if_with desklaunch
