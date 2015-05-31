@@ -2,16 +2,16 @@
 %def_without desklaunch
 Name: icewm-startup
 Version: 0.15
-Release: alt0.1
+Release: alt1
 
 Summary: simple pluggable IceWM autostart manager
 
 Summary(ru_RU.UTF-8): менеджер автозапуска программ IceWM
 License: GPL
 Group: Graphical desktop/Icewm
-Url: http://www.imath.kiev.ua/~vlasenko/
+Url: http://git.altlinux.org
 
-Packager: Igor Vlasenko <viy@altlinux.ru>
+Packager: Dmitriy Khanzhin <jinn@altlinux.org>
 #Source: %name-%version.tar.bz2
 Source1: XXkb.conf
 
@@ -534,12 +534,13 @@ fi
 %config %icewmconfdir/shutdown.d/000-simple-sound
 
 %changelog
-* Sun May 31 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.15-alt0.1
+* Sun May 31 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.15-alt1
 - added "shutdown" script, thx to YYY at forum
 - added simple-sound subpackage, thx to YYY and Leo-sp150 at forum
 - delay moved to separate subpackage
 - cosmetic fix of xxkb conf file
 - some programs are assigned numeric indexes
+- changed Url: and Packager:
 
 * Mon Feb 09 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.14-alt3
 - fixed typo in networkmanager subpackage
