@@ -376,7 +376,7 @@ if [ -e ~/.xxkbrc ] || [ -e /etc/X11/app-defaults/XXkb ]; then
 fi
 EOF
 
-cp %buildroot/%icewmconfdir/startup.d/xxkb %buildroot/%icewmconfdir/startup.d/060-xxkb-tray
+cp %buildroot/%icewmconfdir/startup.d/001-xxkb %buildroot/%icewmconfdir/startup.d/060-xxkb-tray
 
 %if_with desklaunch
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/desklaunch
