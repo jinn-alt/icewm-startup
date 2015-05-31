@@ -326,7 +326,7 @@ cat <<'EOF' > %buildroot/%icewmconfdir/startup.d/010-delay
 #!/bin/sh
 
 # delay before starting programs, to eliminate possible artifacts
-# name start 010- to save ability to run programs before this
+# name index 010- to save ability to run programs before this
 tmem=`free -m | awk '/Mem/{print $2}'`
     if [ $tmem -le 512 ]
 	then delay=7
@@ -337,11 +337,11 @@ tmem=`free -m | awk '/Mem/{print $2}'`
 sleep $delay
 EOF
 
-echo 'xtoolwait gkrellm'> %buildroot/%icewmconfdir/startup.d/gkrellm
+echo 'xtoolwait gkrellm'> %buildroot/%icewmconfdir/startup.d/001-gkrellm
 echo 'kdesktop&'> %buildroot/%icewmconfdir/startup.d/kdesktop
 echo 'ivman&'> %buildroot/%icewmconfdir/startup.d/ivman
 
-cat <<EOF > %buildroot/%icewmconfdir/startup.d/idesk
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/020-idesk
 #!/bin/sh
 if [ -e ~/.ideskrc ]; then 
   idesk &
@@ -351,7 +351,7 @@ fi
 EOF
 
 install -pD -m 644 %SOURCE1 %buildroot/%icewmconfdir/XXkb.conf
-cat <<EOF > %buildroot/%icewmconfdir/startup.d/xxkb
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/001-xxkb
 #!/bin/sh
 # it is not wise to run non-configured xxkb, so we look 
 # whether it is configured.
@@ -364,7 +364,7 @@ if [ -e ~/.xxkbrc ] || [ -e /etc/X11/app-defaults/XXkb ]; then
 fi
 EOF
 
-cp %buildroot/%icewmconfdir/startup.d/xxkb %buildroot/%icewmconfdir/startup.d/xxkb-tray
+cp %buildroot/%icewmconfdir/startup.d/xxkb %buildroot/%icewmconfdir/startup.d/060-xxkb-tray
 
 %if_with desklaunch
 cat <<EOF > %buildroot/%icewmconfdir/startup.d/desklaunch
@@ -390,7 +390,7 @@ fi
 EOF
 %endif #xtdesktop
 
-cat <<EOF > %buildroot/%icewmconfdir/startup.d/update-menus
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/001-update-menus
 #!/bin/sh
 # if user has no local menu we will not create it either.
 # otherwise it is worth updating it.
@@ -399,13 +399,13 @@ if [ -e ~/.icewm/menu ]; then
 fi
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/startup.d/networkmanager
+cat <<EOF > %buildroot/%icewmconfdir/startup.d/080-networkmanager
 #!/bin/sh
 /usr/libexec/polkit-1/polkit-gnome-authentication-agent-1&
 /usr/bin/nm-applet&
 EOF
 
-echo "tray_mixer_plus&" > %buildroot/%icewmconfdir/startup.d/tray_mixer_plus
+echo "tray_mixer_plus&" > %buildroot/%icewmconfdir/startup.d/070-tray_mixer_plus
 
 chmod 755 %buildroot/%icewmconfdir/startup.d/*
 chmod 755 %buildroot/%icewmconfdir/startup
@@ -457,10 +457,10 @@ fi
 %endif #desklaunch
 
 %files gkrellm
-%config %icewmconfdir/startup.d/gkrellm
+%config %icewmconfdir/startup.d/001-gkrellm
 
 %files idesk
-%config %icewmconfdir/startup.d/idesk
+%config %icewmconfdir/startup.d/020-idesk
 
 %files ivman
 %config %icewmconfdir/startup.d/ivman
@@ -469,7 +469,7 @@ fi
 %config %icewmconfdir/startup.d/kdesktop
 
 %files update-menus
-%config %icewmconfdir/startup.d/update-menus
+%config %icewmconfdir/startup.d/001-update-menus
 
 %if_with xtdesktop
 %files xtdesktop
@@ -477,17 +477,17 @@ fi
 %endif #xtdesktop
 
 %files xxkb
-%config %icewmconfdir/startup.d/xxkb
+%config %icewmconfdir/startup.d/001-xxkb
 
 %files xxkb-tray
-%config %icewmconfdir/startup.d/xxkb-tray
+%config %icewmconfdir/startup.d/060-xxkb-tray
 %icewmconfdir/XXkb.conf
 
 %files networkmanager
-%config %icewmconfdir/startup.d/networkmanager
+%config %icewmconfdir/startup.d/080-networkmanager
 
 %files tray_mixer_plus
-%config %icewmconfdir/startup.d/tray_mixer_plus
+%config %icewmconfdir/startup.d/070-tray_mixer_plus
 
 %files grun
 
@@ -496,6 +496,7 @@ fi
 - added "shutdown" script, thx to YYY at forum
 - delay moved to separate subpackage
 - cosmetic fix of xxkb conf file
+- some programs are assigned numeric indexes
 
 * Mon Feb 09 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.14-alt3
 - fixed typo in networkmanager subpackage
