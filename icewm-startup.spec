@@ -263,6 +263,9 @@ EOF
 
 
 %install
+
+# Startup
+
 %__mkdir_p %buildroot/%icewmconfdir/startup.d
 cat <<'EOF' > %buildroot/%icewmconfdir/startup
 #!/bin/sh
@@ -284,6 +287,35 @@ done
 
 # starting user-supplied icewm autostart programs
 for file in ~/.icewm/startup.d/*; do
+  # running user files 
+  # user can disable autostart removing 'execute' bits
+  [ -x $file ] && . $file
+done
+EOF
+
+# Shutdown
+
+%__mkdir_p %buildroot/%icewmconfdir/shutdown.d
+cat <<'EOF' > %buildroot/%icewmconfdir/shutdown
+#!/bin/sh
+
+# starting all system-wide icewm autostart programs in shutdown time
+for file in %icewmconfdir/shutdown.d/*; do
+  userfile=~/.icewm/shutdown.d/`echo $file | sed -e 's,%icewmconfdir/shutdown.d/,,'`
+  # root can disable autostart removing 'execute' bits
+  if [ -x $file ]; then 
+    # User-supplied programs disable system-wide programs.
+    # So user can disable system-wide program 
+    # by touching file in ~/.icewm/shutdown.d/ with the same name
+    # or even replace it with his own script.
+
+    # skip system-wide program if user-supplied file exists.
+    [ -e $userfile ] || . $file
+  fi
+done
+
+# starting user-supplied icewm autostart programs in shutdown time
+for file in ~/.icewm/shutdown.d/*; do
   # running user files 
   # user can disable autostart removing 'execute' bits
   [ -x $file ] && . $file
@@ -413,6 +445,8 @@ fi
 #%doc README
 %dir %icewmconfdir/startup.d
 %config %icewmconfdir/startup
+%dir %icewmconfdir/shutdown.d
+%config %icewmconfdir/shutdown
 #%_man1dir/*
 
 %files delay
