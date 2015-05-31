@@ -496,6 +496,7 @@ fi
 * Sun May 31 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.15-alt0.1
 - added "shutdown" script, thx to YYY at forum
 - delay moved to separate subpackage
+- cosmetic fix of xxkb conf file
 
 * Mon Feb 09 2015 Dmitriy Khanzhin <jinn@altlinux.org> 0.14-alt3
 - fixed typo in networkmanager subpackage
